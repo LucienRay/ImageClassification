@@ -75,8 +75,8 @@ with Bar(f'Classification blocks...',max=(map.shape[0]//blockLength)*(map.shape[
             
 if len(blocks)!=0:
     for i in range(len(blocks)):
-            cv2.imwrite(f"C:\CODE\ImageClassification\\blocks\\{i}.png",blocks[i])
-    logging.info(f'There are {len(blocks)} unknown blocks in {PROJECT_DIR}+\\blocks\\ .')
+            cv2.imwrite(f"{PROJECT_DIR}\\blocks\\{i}.png",blocks[i])
+    logging.info(f'There are {len(blocks)} unknown blocks in {PROJECT_DIR}\\blocks\\ .')
     logging.info('Please rename these blocks and place them in each directory.')
 
 else:

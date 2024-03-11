@@ -12,14 +12,14 @@ git clone git@github.com:ray930227/ImageClassification.git
 pip install -r pip-req.txt 
 ```
 ---
-<id=3> ### **step.3初始化程式碼**
+### **step.3初始化程式碼**
 
 ```
 python init.py
 ```
 
 ---
-<id=4> ### **step.4設定**
+### **step.4設定**
 
 將地圖放進專案目裡，之後更改setting.txt裡的設定
 
@@ -47,9 +47,9 @@ python main.py
 
 結果會顯示在result.txt裡，每隔以逗號隔開，0代表可穿越，1代表不可穿越，2代表事件
 
-之後如果要分析新的地圖，可直接重[第4步](#4)開始
+之後如果要分析新的地圖，可直接重第4步開始
 
-如果要分析不同遊戲得地圖，可直接重[第3步](#3)開始
+如果要分析不同遊戲得地圖，可直接重第3步開始
 
 
 

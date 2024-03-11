@@ -5,7 +5,7 @@ How to Use
 
 **step.1取得專案**  
 ```
-git clone git@github.com:ray930227/MangaCrawler.git
+git clone git@github.com:ray930227/ImageClassification.git
 ```
 - 請確保專案路徑不包含中文
 

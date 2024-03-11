@@ -1,28 +1,28 @@
 How to Use
 ===
 
-**step.1取得專案**  
+### **step.1取得專案**  
 ```
 git clone git@github.com:ray930227/ImageClassification.git
 ```
 - 請確保專案路徑不包含中文
 ---
-**step.2安裝套件**
+### **step.2安裝套件**
 ```
 pip install -r pip-req.txt 
 ```
 ---
-**step.3設定**
+### **step.3設定**
 
 將地圖放進專案目裡，之後更改setting.txt裡的設定
 
 ---
-**step.4執行第一次**
+### **step.4執行第一次**
 ```
 python main.py
 ```
 ---
-**step.5命名未知方塊圖片**
+### **step.5命名未知方塊圖片**
 
 檢查專案目錄中blocks資料夾底下是否有unknown圖片
 
@@ -32,7 +32,7 @@ python main.py
 
 - 請確保blocks資料夾底下的三個資料夾裡有圖片，否則可能會分析錯誤
 ---
-**step.6執行第二次**
+### **step.6執行第二次**
 ```
 python main.py
 ```

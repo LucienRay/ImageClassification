@@ -7,21 +7,22 @@ from progress.bar import Bar
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 PROJECT_DIR=os.path.dirname(os.path.abspath(__file__))
 
-f=open(PROJECT_DIR+'\\setting.txt','r')
-setting=f.readlines()
-mapName=setting[0].split('=')[1].strip()
-blockLength=int(setting[1].split('=')[1].strip())
-blockWidth=int(setting[2].split('=')[1].strip())
-f.close()
-
+try:
+    f=open(PROJECT_DIR+'\\setting.txt','r')
+    setting=f.readlines()
+    mapName=setting[0].split('=')[1].strip()
+    blockLength=int(setting[1].split('=')[1].strip())
+    blockWidth=int(setting[2].split('=')[1].strip())
+    f.close()
+except ValueError:
+    logging.error("The setting.txt has not been set yet.")
+    os._exit(0)
 
 map = cv2.imread(PROJECT_DIR+'\\'+mapName)
-traversableBlocksList=os.listdir(PROJECT_DIR+'\\blocks\\traversable')
-untraversableBlocksList = os.listdir(PROJECT_DIR+'\\blocks\\untraversable')
-eventBlocksList=os.listdir(PROJECT_DIR+'\\blocks\\event')
+traversableBlocksList=[os.listdir(PROJECT_DIR+'\\blocks\\traversable\\normal'),os.listdir(PROJECT_DIR+'\\blocks\\traversable\\event')]
+untraversableBlocksList=[os.listdir(PROJECT_DIR+'\\blocks\\untraversable\\normal'),os.listdir(PROJECT_DIR+'\\blocks\\untraversable\\event')]
 traversableBlocks=[]
 untraversableBlocks=[]
-eventBlocks=[]
 blocks=[]
 result=[[0 for i in range(map.shape[1]//blockWidth)]for i in range(map.shape[0]//blockLength)]
 
@@ -43,29 +44,34 @@ def SimilarityCheck(target,Blocks):
             cv2.waitKey(0)
     return False
 
-if len(traversableBlocksList+untraversableBlocksList+eventBlocksList)!=0:
-    with Bar(f'Loading blocks...',max=len(traversableBlocksList+untraversableBlocksList+eventBlocksList)) as bar:
-        for i in traversableBlocksList:
-            traversableBlocks.append(cv2.imread(PROJECT_DIR+'\\blocks\\traversable\\'+i))
-            bar.next()
+def readImage(path,fileArray):
+    result=[]
+    for i in fileArray:
+        result.append(cv2.imread(path+i))
+    return result
 
-        for i in untraversableBlocksList:
-            untraversableBlocks.append(cv2.imread(PROJECT_DIR+'\\blocks\\untraversable\\'+i))
-            bar.next()
-
-        for i in eventBlocksList:
-            eventBlocks.append(cv2.imread(PROJECT_DIR+'\\blocks\\event\\'+i))
-            bar.next()
+if len(traversableBlocksList[0]+traversableBlocksList[1]+untraversableBlocksList[0]+untraversableBlocksList[1])!=0:
+    with Bar(f'Loading blocks...',max=len(traversableBlocksList[0]+traversableBlocksList[1]+untraversableBlocksList[0]+untraversableBlocksList[1])) as bar:
+        traversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\traversable\\normal\\',traversableBlocksList[0]))
+        bar.next(len(traversableBlocksList[0]))
+        traversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\traversable\\event\\',traversableBlocksList[1]))
+        bar.next(len(traversableBlocksList[1]))
+        untraversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\untraversable\\normal\\',untraversableBlocksList[0]))
+        bar.next(len(untraversableBlocksList[0]))
+        untraversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\untraversable\\event\\',untraversableBlocksList[1]))
+        bar.next(len(untraversableBlocksList[1]))
     
 with Bar(f'Classification blocks...',max=(map.shape[0]//blockLength)*(map.shape[1]//blockWidth)) as bar:
     for i in range(0,map.shape[0],blockLength):
         for j in range(0,map.shape[1],blockWidth):
-            if SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],traversableBlocks):
+            if SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],traversableBlocks[0]):
                 result[i//blockLength][j//blockWidth]=0
-            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],untraversableBlocks):
+            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],untraversableBlocks[0]):
                 result[i//blockLength][j//blockWidth]=1
-            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],eventBlocks):
+            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],traversableBlocks[1]):
                 result[i//blockLength][j//blockWidth]=2
+            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],untraversableBlocks[1]):
+                result[i//blockLength][j//blockWidth]=3
             elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],blocks):
                 result[i//blockLength][j//blockWidth]=-1
             else:

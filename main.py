@@ -21,8 +21,8 @@ except ValueError:
 map = cv2.imread(PROJECT_DIR+'\\'+mapName)
 traversableBlocksList=[os.listdir(PROJECT_DIR+'\\blocks\\traversable\\normal'),os.listdir(PROJECT_DIR+'\\blocks\\traversable\\event')]
 untraversableBlocksList=[os.listdir(PROJECT_DIR+'\\blocks\\untraversable\\normal'),os.listdir(PROJECT_DIR+'\\blocks\\untraversable\\event')]
-traversableBlocks=[]
-untraversableBlocks=[]
+traversableBlocks=[[],[]]
+untraversableBlocks=[[],[]]
 blocks=[]
 result=[[0 for i in range(map.shape[1]//blockWidth)]for i in range(map.shape[0]//blockLength)]
 
@@ -52,13 +52,13 @@ def readImage(path,fileArray):
 
 if len(traversableBlocksList[0]+traversableBlocksList[1]+untraversableBlocksList[0]+untraversableBlocksList[1])!=0:
     with Bar(f'Loading blocks...',max=len(traversableBlocksList[0]+traversableBlocksList[1]+untraversableBlocksList[0]+untraversableBlocksList[1])) as bar:
-        traversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\traversable\\normal\\',traversableBlocksList[0]))
+        traversableBlocks[0]=readImage(PROJECT_DIR+'\\blocks\\traversable\\normal\\',traversableBlocksList[0])
         bar.next(len(traversableBlocksList[0]))
-        traversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\traversable\\event\\',traversableBlocksList[1]))
+        traversableBlocks[1]=readImage(PROJECT_DIR+'\\blocks\\traversable\\event\\',traversableBlocksList[1])
         bar.next(len(traversableBlocksList[1]))
-        untraversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\untraversable\\normal\\',untraversableBlocksList[0]))
+        untraversableBlocks[0]=readImage(PROJECT_DIR+'\\blocks\\untraversable\\normal\\',untraversableBlocksList[0])
         bar.next(len(untraversableBlocksList[0]))
-        untraversableBlocks.append(readImage(PROJECT_DIR+'\\blocks\\untraversable\\event\\',untraversableBlocksList[1]))
+        untraversableBlocks[1]=readImage(PROJECT_DIR+'\\blocks\\untraversable\\event\\',untraversableBlocksList[1])
         bar.next(len(untraversableBlocksList[1]))
     
 with Bar(f'Classification blocks...',max=(map.shape[0]//blockLength)*(map.shape[1]//blockWidth)) as bar:

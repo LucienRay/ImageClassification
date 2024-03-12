@@ -97,7 +97,7 @@ else:
             temp+='\n'
             lines.append(temp)
 
-        path = 'C:\CODE\ImageClassification\\result.txt'
+        path = PROJECT_DIR+'\\result.txt'
         f = open(path, 'w')
         f.writelines(lines)
         f.close()

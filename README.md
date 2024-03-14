@@ -49,6 +49,12 @@ python main.py
 
 結果會顯示在result.txt裡，每格以setting.txt裡的interval隔開
 
+如果要對result.txt裡的相同名稱一次做更改可執行以下指令
+
+```
+python replace.py 更改前的名字 更改後的名字
+```
+
 之後如果要分析新的地圖，可直接重第4步開始
 
 如果要分析不同遊戲得地圖，可直接重第3步開始

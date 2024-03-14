@@ -15,13 +15,13 @@ except ValueError:
     sys.exit()
 
 try:
-    if len(sys.argv)!=3:
-        logging.error("need two argument")
+    if len(sys.argv)<3:
+        logging.error("need at least two argument")
     else:
         f = open(os.path.join(PROJECT_DIR, 'result.txt'), 'r+')
-        lines=[sys.argv[2].join(i.split(sys.argv[1])) for i in f.readlines()]
-        f.seek(0)
-        f.writelines(lines)
+        lines=f.readlines()
+        for i in sys.argv[1:-1]:
+            lines=[sys.argv[-1].join(line.split(i)) for line in lines]
         f.close()
         os.remove(PROJECT_DIR + '\\result.txt')
         f = open(PROJECT_DIR + '\\result.txt', 'w')

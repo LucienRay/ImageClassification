@@ -49,10 +49,10 @@ python main.py
 
 結果會顯示在result.txt裡，每格以setting.txt裡的interval隔開
 
-如果要對result.txt裡的相同名稱一次做更改可執行以下指令
+如果要對result.txt裡的n個東西一次做更改可執行以下指令
 
 ```
-python replace.py 更改前的名字 更改後的名字
+python replace.py 更改前的名字1 更改前的名字2 ... 更改前的名字n 更改後的名字
 ```
 
 之後如果要分析新的地圖，可直接重第4步開始

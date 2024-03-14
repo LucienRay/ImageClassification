@@ -60,7 +60,7 @@ with Bar(f'Classification blocks...',max=(map.shape[0]//blockLength)*(map.shape[
 if len(unknownBlocks)!=0:
     with Bar(f'Save unknownBlocks...', max=(len(unknownBlocks))) as bar:
         for i in range(len(unknownBlocks)):
-                cv2.imwrite(f"{PROJECT_DIR}\\blocks\\{i}.png",unknownBlocks[i])
+                cv2.imwrite(f"{PROJECT_DIR}\\blocks\\unknown{i}.png",unknownBlocks[i])
                 bar.next()
     logging.info(f'There are {len(unknownBlocks)} unknown blocks in {PROJECT_DIR}\\blocks\\ .')
     logging.info('Please rename these blocks and place them in each directory.')

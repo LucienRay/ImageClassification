@@ -13,6 +13,8 @@ try:
     mapName=setting[0].split('=')[1].strip()
     blockLength=int(setting[1].split('=')[1].strip())
     blockWidth=int(setting[2].split('=')[1].strip())
+    threshold=int(setting[3].split('=')[1].strip())
+    interval=setting[4].split('=')[1].strip("\"\n")
     f.close()
 except ValueError:
     logging.error("The setting.txt has not been set yet.")
@@ -38,7 +40,7 @@ with Bar(f'Classification blocks...',max=(map.shape[0]//blockLength)*(map.shape[
         for i in range(len(Blocks)):
             diff = cv2.absdiff(Blocks[i], target)
             mse = np.mean(diff ** 2)
-            if mse < 50:
+            if mse < threshold:
                 return True,i
         return False,None
 
@@ -70,7 +72,7 @@ else:
             temp=str(i[0])
             bar.next()
             for j in i[1:]:
-                temp+=","+str(j)
+                temp+=interval+str(j)
                 bar.next()
             temp+='\n'
             lines.append(temp)

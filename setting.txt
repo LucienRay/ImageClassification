@@ -1,3 +1,5 @@
 mapName=
 blockLength=
 blockWidth=
+threshold=50
+interval=","

@@ -12,7 +12,11 @@ except FileNotFoundError:
     pass
 
 f=open(PROJECT_DIR+'\\setting.txt','w')
-f.write("mapName=\nblockLength=\nblockWidth=")
+f.write("mapName=\n")
+f.write("blockLength=\n")
+f.write("blockWidth=\n")
+f.write("threshold=50\n")
+f.write("interval=\",\"\n")
 f.close()
 
 os.mkdir(PROJECT_DIR+'\\blocks')

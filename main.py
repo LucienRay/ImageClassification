@@ -19,70 +19,48 @@ except ValueError:
     os._exit(0)
 
 map = cv2.imread(PROJECT_DIR+'\\'+mapName)
-traversableBlocksList=[os.listdir(PROJECT_DIR+'\\blocks\\traversable\\normal'),os.listdir(PROJECT_DIR+'\\blocks\\traversable\\event')]
-untraversableBlocksList=[os.listdir(PROJECT_DIR+'\\blocks\\untraversable\\normal'),os.listdir(PROJECT_DIR+'\\blocks\\untraversable\\event')]
-traversableBlocks=[[],[]]
-untraversableBlocks=[[],[]]
-blocks=[]
+blocks={i:None for i in os.listdir(PROJECT_DIR+'\\blocks')}
+unknownBlocks=[]
 result=[[0 for i in range(map.shape[1]//blockWidth)]for i in range(map.shape[0]//blockLength)]
 
 if map.shape[0]%blockLength!=0 or map.shape[1]%blockWidth!=0:
     logging.error("Map's size is not a multiple of block's size.")
     os._exit(0)
 
-def SimilarityCheck(target,Blocks):
-    for i in Blocks:
-        try:
-            diff=cv2.absdiff(i,target)
-            mse=np.mean(diff**2)
-            if mse<50:
-                return True
-        except:
-            cv2.imshow("test",target)
-            cv2.waitKey(0)
-            cv2.imshow(i)
-            cv2.waitKey(0)
-    return False
+if len(blocks)!=0:
+    with Bar(f'Loading blocks...',max=len(blocks))as bar:
+        for i in blocks.keys():
+            blocks[i]=cv2.imread(PROJECT_DIR+f'\\blocks\\{i}')
+            bar.next()
 
-def readImage(path,fileArray):
-    result=[]
-    for i in fileArray:
-        result.append(cv2.imread(path+i))
-    return result
-
-if len(traversableBlocksList[0]+traversableBlocksList[1]+untraversableBlocksList[0]+untraversableBlocksList[1])!=0:
-    with Bar(f'Loading blocks...',max=len(traversableBlocksList[0]+traversableBlocksList[1]+untraversableBlocksList[0]+untraversableBlocksList[1])) as bar:
-        traversableBlocks[0]=readImage(PROJECT_DIR+'\\blocks\\traversable\\normal\\',traversableBlocksList[0])
-        bar.next(len(traversableBlocksList[0]))
-        traversableBlocks[1]=readImage(PROJECT_DIR+'\\blocks\\traversable\\event\\',traversableBlocksList[1])
-        bar.next(len(traversableBlocksList[1]))
-        untraversableBlocks[0]=readImage(PROJECT_DIR+'\\blocks\\untraversable\\normal\\',untraversableBlocksList[0])
-        bar.next(len(untraversableBlocksList[0]))
-        untraversableBlocks[1]=readImage(PROJECT_DIR+'\\blocks\\untraversable\\event\\',untraversableBlocksList[1])
-        bar.next(len(untraversableBlocksList[1]))
-    
 with Bar(f'Classification blocks...',max=(map.shape[0]//blockLength)*(map.shape[1]//blockWidth)) as bar:
+    def SimilarityCheck(target, Blocks):
+        for i in range(len(Blocks)):
+            diff = cv2.absdiff(Blocks[i], target)
+            mse = np.mean(diff ** 2)
+            if mse < 50:
+                return True,i
+        return False,None
+
     for i in range(0,map.shape[0],blockLength):
         for j in range(0,map.shape[1],blockWidth):
-            if SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],traversableBlocks[0]):
-                result[i//blockLength][j//blockWidth]=0
-            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],untraversableBlocks[0]):
-                result[i//blockLength][j//blockWidth]=1
-            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],traversableBlocks[1]):
-                result[i//blockLength][j//blockWidth]=2
-            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],untraversableBlocks[1]):
-                result[i//blockLength][j//blockWidth]=3
-            elif SimilarityCheck(map[i:i+blockLength,j:j+blockWidth],blocks):
-                result[i//blockLength][j//blockWidth]=-1
+            knownCheck = SimilarityCheck(map[i:i + blockLength, j:j + blockWidth], list(blocks.values()))
+            unknownCheck = SimilarityCheck(map[i:i + blockLength, j:j + blockWidth], unknownBlocks)
+            if knownCheck[0]:
+                result[i//blockLength][j//blockWidth]=list(blocks.keys())[knownCheck[1]][:-4]
+            elif unknownCheck[0]:
+                result[i//blockLength][j//blockWidth]="unknown"
             else:
-                blocks.append(map[i:i+blockLength,j:j+blockWidth])
-                result[i//blockLength][j//blockWidth]=-1
+                unknownBlocks.append(map[i:i+blockLength,j:j+blockWidth])
+                result[i//blockLength][j//blockWidth]="unknown"
             bar.next()
-            
-if len(blocks)!=0:
-    for i in range(len(blocks)):
-            cv2.imwrite(f"{PROJECT_DIR}\\blocks\\{i}.png",blocks[i])
-    logging.info(f'There are {len(blocks)} unknown blocks in {PROJECT_DIR}\\blocks\\ .')
+
+if len(unknownBlocks)!=0:
+    with Bar(f'Save unknownBlocks...', max=(len(unknownBlocks))) as bar:
+        for i in range(len(unknownBlocks)):
+                cv2.imwrite(f"{PROJECT_DIR}\\blocks\\{i}.png",unknownBlocks[i])
+                bar.next()
+    logging.info(f'There are {len(unknownBlocks)} unknown blocks in {PROJECT_DIR}\\blocks\\ .')
     logging.info('Please rename these blocks and place them in each directory.')
 
 else:
